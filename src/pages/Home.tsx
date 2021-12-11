@@ -1,10 +1,19 @@
 import {FC} from 'react';
+import {FlatList, View} from 'react-native';
+import {ListItem, BottomBar} from '../components';
 import {useSongList} from '../hooks';
 
 const Home: FC = () => {
   const songList = useSongList();
-  console.log(songList.slice(0, 10));
-  return null;
+  return (
+    <View>
+      <FlatList
+        data={songList}
+        renderItem={({item}) => <ListItem {...item} />}
+      />
+      <BottomBar />
+    </View>
+  );
 };
 
 export default Home;

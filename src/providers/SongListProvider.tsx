@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import {Song} from '../helpers/types';
-import useAuth from '../hooks/useAuth';
+import {useAuth} from '../hooks';
 
 type SongListContextType = {
   songs: Song[];
@@ -55,7 +55,7 @@ const SongListProvider: FC = ({children}) => {
         }
       });
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, loadData]);
 
   useEffect(() => {
     AsyncStorageLib.getItem(FAVORITES_KEY).then(json => {
@@ -85,7 +85,7 @@ const SongListProvider: FC = ({children}) => {
 
   const state = useMemo(
     () => ({songs, favorites, switchFavorite, loading, refetch: loadData}),
-    [songs, loading, favorites],
+    [songs, loading, favorites, loadData, switchFavorite],
   );
 
   return (

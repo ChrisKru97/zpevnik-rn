@@ -4,3 +4,5 @@ export {default as BottomBar} from './BottomBar';
 export {default as SettingsModal} from './SettingsModal';
 export {default as NumberInputModal} from './NumberInputModal';
 export {default as SearchModal} from './SearchModal';
+export {default as CustomStatusBar} from './CustomStatusBar';
+export {default as ScrollBar} from './ScrollBar';

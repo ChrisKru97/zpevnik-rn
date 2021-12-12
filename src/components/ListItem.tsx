@@ -6,8 +6,11 @@ import {spacing} from '../helpers/spacing';
 import {Song} from '../helpers/types';
 import {useSongList} from '../hooks';
 
+export const ITEM_HEIGHT = 54.5;
+
 const styles = StyleSheet.create({
   borderBottom: {
+    height: ITEM_HEIGHT,
     borderBottomWidth: 0.5,
     borderBottomColor: '#bfbfbf',
   },

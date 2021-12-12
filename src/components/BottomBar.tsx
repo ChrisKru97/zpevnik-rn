@@ -3,11 +3,14 @@ import {IconOutline, OutlineGlyphMapType} from '@ant-design/icons-react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import useModal from '../hooks/useModal';
+import {useModal} from '../hooks';
 import {ModalType, StackParamList} from '../helpers/types';
+
+export const BOTTOM_BAR_HEIGHT = 72;
 
 const styles = StyleSheet.create({
   wrapper: {
+    height: BOTTOM_BAR_HEIGHT,
     position: 'absolute',
     bottom: 0,
     width: '100%',

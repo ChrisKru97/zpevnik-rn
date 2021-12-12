@@ -1,10 +1,14 @@
-import {NativeStackHeaderProps} from '@react-navigation/native-stack';
+import {useRoute} from '@react-navigation/native';
 import {FC, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View, ViewProps} from 'react-native';
+import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
+
+export const HEADER_HEIGHT = 55;
 
 const styles = StyleSheet.create({
   wrapper: {
+    height: HEADER_HEIGHT,
     backgroundColor: '#00300d',
   },
   title: {
@@ -14,7 +18,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Header: FC<NativeStackHeaderProps> = ({route: {name}}) => {
+interface Props {
+  onPress?: () => void;
+}
+
+const Header: FC<Props> = ({onPress}) => {
+  const {name} = useRoute();
   const title = useMemo(() => {
     switch (name) {
       case 'Home':
@@ -27,9 +36,13 @@ const Header: FC<NativeStackHeaderProps> = ({route: {name}}) => {
   }, [name]);
 
   return (
-    <View style={[spacing.py2, styles.wrapper]}>
+    <Pressable
+      onPress={onPress}
+      style={[styles.wrapper, globalStyles.row, globalStyles.spaceBetween]}>
+      <View style={globalStyles.flex} />
       <Text style={styles.title}>{title}</Text>
-    </View>
+      <View style={globalStyles.flex} />
+    </Pressable>
   );
 };
 export default Header;

@@ -1,6 +1,9 @@
 import {StyleSheet} from 'react-native';
 
 export const globalStyles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -9,6 +12,7 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   text: {
+    color: 'black',
     fontSize: 16,
   },
   bold: {

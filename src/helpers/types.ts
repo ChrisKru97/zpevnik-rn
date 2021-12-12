@@ -6,3 +6,18 @@ export type Song = {
   withChords: string;
   withoutChords: string;
 };
+
+export type StackParamList = {
+  Home: undefined;
+  History: undefined;
+  Favorites: undefined;
+  Song: undefined;
+  Edit: undefined;
+  Account: undefined;
+};
+
+export enum ModalType {
+  search,
+  numberInput,
+  settings,
+}

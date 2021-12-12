@@ -11,7 +11,7 @@ export type StackParamList = {
   Home: undefined;
   History: undefined;
   Favorites: undefined;
-  Song: undefined;
+  Song: Song;
   Edit: undefined;
   Account: undefined;
 };

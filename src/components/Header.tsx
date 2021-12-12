@@ -1,8 +1,10 @@
-import {useRoute} from '@react-navigation/native';
+import {IconOutline} from '@ant-design/icons-react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {FC, useMemo} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {globalStyles} from '../helpers/globalStyles';
+import {spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useTheme} from '../hooks';
 
@@ -24,15 +26,22 @@ const createStyles = (colors: Theme, safeTop: number) =>
 
 interface Props {
   onPress?: () => void;
+  title?: string;
 }
 
-const Header: FC<Props> = ({onPress}) => {
+const Header: FC<Props> = ({onPress, title: titleProp}) => {
   const {colors} = useTheme();
   const {top} = useSafeAreaInsets();
   const styles = createStyles(colors, top);
   const {name} = useRoute();
+  const navigation = useNavigation();
+
+  const isRoot = name === 'Home';
 
   const title = useMemo(() => {
+    if (titleProp) {
+      return titleProp;
+    }
     switch (name) {
       case 'Home':
         return 'Mládežový zpěvník';
@@ -41,7 +50,7 @@ const Header: FC<Props> = ({onPress}) => {
       case 'History':
         return 'Poslední otevřené';
     }
-  }, [name]);
+  }, [name, titleProp]);
 
   return (
     <>
@@ -49,7 +58,18 @@ const Header: FC<Props> = ({onPress}) => {
       <Pressable
         onPress={onPress}
         style={[styles.wrapper, globalStyles.row, globalStyles.spaceBetween]}>
-        <View style={globalStyles.flex} />
+        {isRoot ? (
+          <View style={globalStyles.flex} />
+        ) : (
+          <Pressable style={globalStyles.flex} onPress={navigation.goBack}>
+            <IconOutline
+              style={spacing.ml3}
+              name="left"
+              color="white"
+              size={22}
+            />
+          </Pressable>
+        )}
         <Text style={styles.title}>{title}</Text>
         <View style={globalStyles.flex} />
       </Pressable>

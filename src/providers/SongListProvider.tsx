@@ -14,6 +14,7 @@ import {useAuth} from '../hooks';
 type SongListContextType = {
   songs: Song[];
   favorites: number[];
+  favoritesSongs: Song[];
   switchFavorite: (number: number) => void;
   refetch: () => void;
   loading: boolean;
@@ -83,9 +84,21 @@ const SongListProvider: FC = ({children}) => {
     [favorites],
   );
 
+  const favoritesSongs = useMemo(
+    () => songs.filter(({number}) => favorites.includes(number)),
+    [songs, favorites],
+  );
+
   const state = useMemo(
-    () => ({songs, favorites, switchFavorite, loading, refetch: loadData}),
-    [songs, loading, favorites, loadData, switchFavorite],
+    () => ({
+      songs,
+      favorites,
+      favoritesSongs,
+      switchFavorite,
+      loading,
+      refetch: loadData,
+    }),
+    [songs, loading, favorites, loadData, switchFavorite, favoritesSongs],
   );
 
   return (

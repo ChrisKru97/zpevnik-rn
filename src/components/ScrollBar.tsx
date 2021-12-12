@@ -1,10 +1,5 @@
-import {FC, RefObject, useCallback, useState} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
-import {
-  FlatList,
-  gestureHandlerRootHOC,
-  PanGestureHandler,
-} from 'react-native-gesture-handler';
+import {FC, useCallback, useRef, useState} from 'react';
+import {Animated, GestureResponderEvent, StyleSheet, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Theme} from '../helpers/theme';
 import {useTheme} from '../hooks';
@@ -18,34 +13,60 @@ const createStyles = (colors: Theme) =>
   StyleSheet.create({
     wrapper: {
       position: 'absolute',
-      right: 8,
+      right: -HANDLE_WIDTH - 8,
       bottom: BOTTOM_BAR_HEIGHT,
       width: HANDLE_WIDTH,
     },
     handle: {
+      right: 8,
       position: 'absolute',
       width: HANDLE_WIDTH,
       height: HANDLE_HEIGHT,
       backgroundColor: colors.secondary,
       borderRadius: 12,
-      zIndex: 10,
-      elevation: 2,
     },
   });
 
 interface Props {
-  scrollRef: RefObject<FlatList>;
-  scrollValue: Animated.Value;
+  scrollValue: Animated.AnimatedInterpolation;
+  setScrollRatio: (ratioDiff: number) => void;
+  setFinalScrollRatio: (ratioDiff: number) => void;
 }
 
-const ScrollBar: FC<Props> = ({scrollRef, scrollValue}) => {
+const ScrollBar: FC<Props> = ({
+  scrollValue,
+  setScrollRatio,
+  setFinalScrollRatio,
+}) => {
   const {colors} = useTheme();
   const {top: safeTop} = useSafeAreaInsets();
   const [height, setHeight] = useState<number>(0);
+  const startPosition = useRef<number>();
   const styles = createStyles(colors);
-  const onDrag = useCallback(e => {
-    console.log(e);
+
+  const onDrag = useCallback(
+    (e: GestureResponderEvent) => {
+      const diff = e.nativeEvent.pageY - startPosition.current!;
+      const ratioDiff = diff / (height - HANDLE_HEIGHT);
+      setScrollRatio(ratioDiff);
+    },
+    [height, setScrollRatio],
+  );
+
+  const onStart = useCallback((e: GestureResponderEvent) => {
+    startPosition.current = e.nativeEvent.pageY;
+    return true;
   }, []);
+
+  const onEnd = useCallback(
+    (e: GestureResponderEvent) => {
+      const diff = e.nativeEvent.pageY - startPosition.current!;
+      const ratioDiff = diff / (height - HANDLE_HEIGHT);
+      setFinalScrollRatio(ratioDiff);
+      startPosition.current = undefined;
+    },
+    [height, setFinalScrollRatio],
+  );
 
   const top = scrollValue.interpolate({
     inputRange: [0, 1],
@@ -56,11 +77,13 @@ const ScrollBar: FC<Props> = ({scrollRef, scrollValue}) => {
     <View
       style={[styles.wrapper, {top: safeTop + HEADER_HEIGHT}]}
       onLayout={e => setHeight(e.nativeEvent.layout.height)}>
-      <PanGestureHandler onGestureEvent={onDrag} maxPointers={1} hitSlop={16}>
-        <Animated.View style={[styles.handle, {top}]} />
-      </PanGestureHandler>
+      <Animated.View
+        onResponderMove={onDrag}
+        onResponderRelease={onEnd}
+        onStartShouldSetResponder={onStart}
+        style={[styles.handle, {top}]}
+      />
     </View>
   );
 };
-// export default ScrollBar
-export default gestureHandlerRootHOC(ScrollBar);
+export default ScrollBar;

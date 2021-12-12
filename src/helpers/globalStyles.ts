@@ -12,6 +12,7 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   text: {
+    textAlign: 'center',
     color: 'black',
     fontSize: 16,
   },

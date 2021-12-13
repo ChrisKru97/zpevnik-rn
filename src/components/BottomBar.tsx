@@ -47,10 +47,6 @@ const items: Item[] = [
     screen: 'History',
   },
   {
-    icon: 'setting',
-    modal: ModalType.settings,
-  },
-  {
     icon: 'edit',
     screen: 'Edit',
   },

@@ -1,5 +1,5 @@
 import {createContext, FC, useState} from 'react';
-import {NumberInputModal, SearchModal, SettingsModal} from '../components';
+import {NumberInputModal, SearchModal} from '../components';
 import {ModalType} from '../helpers/types';
 
 type ModalContextType = (type: ModalType) => void;
@@ -12,7 +12,6 @@ const ModalProvider: FC = ({children}) => {
   return (
     <ModalContext.Provider value={setModalOpen}>
       {children}
-      <SettingsModal visible={modalOpen === ModalType.settings} />
       <NumberInputModal visible={modalOpen === ModalType.numberInput} />
       <SearchModal visible={modalOpen === ModalType.search} />
     </ModalContext.Provider>

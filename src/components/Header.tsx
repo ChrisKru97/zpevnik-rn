@@ -1,13 +1,19 @@
 import {IconOutline} from '@ant-design/icons-react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {FC, useMemo} from 'react';
-import {Animated, Pressable, StyleSheet, Text, View} from 'react-native';
+import {FC, useMemo, useState} from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Heart} from '.';
 import {globalStyles} from '../helpers/globalStyles';
-import {spacing} from '../helpers/spacing';
+import {SPACING, spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useTheme} from '../hooks';
-import DarkModeSwitch from './DarkModeSwitch';
 
 export const HEADER_HEIGHT = 55;
 
@@ -19,7 +25,8 @@ const createStyles = (colors: Theme, safeTop: number) =>
     },
     title: {
       color: 'white',
-      fontSize: 25,
+    },
+    alignCenter: {
       textAlign: 'center',
     },
     spacer: {height: safeTop, backgroundColor: colors.primary},
@@ -31,17 +38,24 @@ const createStyles = (colors: Theme, safeTop: number) =>
 
 interface Props {
   title?: string;
-  scrollValue?: Animated.AnimatedInterpolation;
+  number?: number;
 }
 
-const Header: FC<Props> = ({title: titleProp, scrollValue}) => {
+const ICON_SIZE = 22;
+const DEFAULT_FONT_SIZE = 25;
+
+const Header: FC<Props> = ({title: titleProp, number}) => {
   const {colors} = useTheme();
   const {top} = useSafeAreaInsets();
+  const {width} = useWindowDimensions();
   const styles = createStyles(colors, top);
   const {name} = useRoute();
   const navigation = useNavigation();
+  const [fontSize, setFontSize] = useState<number>(DEFAULT_FONT_SIZE);
 
   const isRoot = name === 'Home';
+
+  // const maxWidth = isRoot ? width : width - (ICON_SIZE + 6 * SPACING);
 
   const title = useMemo(() => {
     if (titleProp) {
@@ -57,79 +71,44 @@ const Header: FC<Props> = ({title: titleProp, scrollValue}) => {
     }
   }, [name, titleProp]);
 
-  if (!isRoot || !scrollValue) {
-    return (
-      <>
-        <View style={styles.spacer} />
-        <View
-          style={[styles.wrapper, globalStyles.row, globalStyles.spaceBetween]}>
-          <Pressable style={globalStyles.flex} onPress={navigation.goBack}>
-            <IconOutline
-              style={spacing.ml3}
-              name="left"
-              color="white"
-              size={22}
-            />
-          </Pressable>
-          <Text style={styles.title}>{title}</Text>
-          <View style={globalStyles.flex} />
-        </View>
-      </>
-    );
-  }
-
-  const height = scrollValue.interpolate({
-    inputRange: [0, 1, 2],
-    outputRange: [80, 55, 0],
-    extrapolate: 'clamp',
-  });
-
-  const left = scrollValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['5%', '50%'],
-    extrapolate: 'clamp',
-  });
-
-  const translateX = scrollValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -100],
-    extrapolate: 'clamp',
-  });
-
-  const opacity = scrollValue.interpolate({
-    inputRange: [0, 1, 2],
-    outputRange: [1, 1, 0],
-    extrapolate: 'clamp',
-  });
-
-  const switchOpacity = scrollValue.interpolate({
-    inputRange: [0, 0.5],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
   return (
     <>
       <View style={styles.spacer} />
-      <Animated.View style={[styles.wrapper, {height}, globalStyles.row]}>
-        <Animated.Text
+      <View
+        style={[
+          styles.wrapper,
+          globalStyles.row,
+          !!number && globalStyles.spaceBetween,
+        ]}>
+        {!isRoot && (
+          <Pressable onPress={navigation.goBack}>
+            <IconOutline
+              style={spacing.mx4}
+              name="left"
+              color="white"
+              size={ICON_SIZE}
+            />
+          </Pressable>
+        )}
+        <Text
+          // onLayout={e => {
+          //   if (e.nativeEvent.layout.width > maxWidth) {
+          //     setFontSize(fontSize - 1);
+          //   }
+          // }}
           style={[
             styles.title,
-            styles.absolute,
-            {
-              left,
-              transform: [{translateX}],
-              opacity,
-            },
+            isRoot && [styles.alignCenter, globalStyles.flex],
+            {fontSize},
           ]}>
           {title}
-        </Animated.Text>
-        <Animated.View
-          style={[styles.switch, spacing.mr4, {opacity: switchOpacity}]}>
-          <DarkModeSwitch />
-        </Animated.View>
-      </Animated.View>
+        </Text>
+        {number && (
+          <Heart number={number} style={spacing.mx4} color="white" size={22} />
+        )}
+      </View>
     </>
   );
 };
+
 export default Header;

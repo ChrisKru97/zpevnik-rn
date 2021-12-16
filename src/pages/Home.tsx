@@ -1,7 +1,6 @@
-import {FC, useRef} from 'react';
+import {FC} from 'react';
 import {
   ActivityIndicator,
-  Animated,
   RefreshControl,
   View,
   FlatList,
@@ -19,23 +18,13 @@ const styles = StyleSheet.create({
 
 const Home: FC = () => {
   const {songs, loading, refetch} = useSongList();
-  const scrollValue = useRef(new Animated.Value(0)).current;
-
-  const scrollValueInterpolated = scrollValue.interpolate({
-    inputRange: [0, 1000],
-    outputRange: [0, 1],
-  });
 
   return (
     <View style={globalStyles.flex}>
-      <Header scrollValue={scrollValueInterpolated} />
       <FlatList
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollValue}}}],
-          {useNativeDriver: false},
-        )}
         showsVerticalScrollIndicator={false}
         data={songs}
+        ListHeaderComponent={<Header />}
         ListFooterComponent={<View style={styles.footer} />}
         refreshControl={
           <RefreshControl

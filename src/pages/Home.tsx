@@ -1,11 +1,5 @@
 import {FC} from 'react';
-import {
-  ActivityIndicator,
-  RefreshControl,
-  View,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import {RefreshControl, View, FlatList, StyleSheet} from 'react-native';
 import {ListItem, BottomBar, Header} from '../components';
 import {BOTTOM_BAR_HEIGHT} from '../components/BottomBar';
 import {HEADER_HEIGHT} from '../components/Header';
@@ -35,7 +29,6 @@ const Home: FC = () => {
           />
         }
         renderItem={({item}) => <ListItem {...item} />}
-        ListEmptyComponent={<ActivityIndicator size="large" />}
       />
       <BottomBar />
     </View>

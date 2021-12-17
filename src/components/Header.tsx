@@ -48,8 +48,8 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
   const isRoot = name === 'Home';
 
   const title = useMemo(() => {
-    if (titleProp) {
-      return titleProp;
+    if (titleProp && number) {
+      return `${number}. ${titleProp}`;
     }
     switch (name) {
       case 'Home':
@@ -59,7 +59,7 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
       case 'History':
         return 'Poslední otevřené';
     }
-  }, [name, titleProp]);
+  }, [name, number, titleProp]);
 
   return (
     <>

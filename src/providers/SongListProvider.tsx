@@ -19,6 +19,7 @@ type SongListContextType = {
   switchFavorite: (number: number) => void;
   refetch: () => void;
   loading: boolean;
+  searchValue?: string;
   search: (value: string) => void;
 };
 
@@ -34,7 +35,7 @@ const SongListProvider: FC = ({children}) => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchString, setSearchString] = useState<string>();
+  const [searchString, setSearchString] = useState<string>('');
 
   const songsFiltered = useMemo(
     () =>
@@ -113,6 +114,7 @@ const SongListProvider: FC = ({children}) => {
       switchFavorite,
       loading,
       refetch: loadData,
+      searchValue: searchString,
       search: (text: string) => setSearchString(deburr(text.toLowerCase())),
     }),
     [
@@ -122,6 +124,7 @@ const SongListProvider: FC = ({children}) => {
       switchFavorite,
       loading,
       loadData,
+      searchString,
     ],
   );
 

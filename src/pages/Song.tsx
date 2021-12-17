@@ -5,12 +5,19 @@ import {Header, SongBottomBar} from '../components';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {StackParamList} from '../helpers/types';
-import {useConfig} from '../hooks';
+import {useConfig, useHistory} from '../hooks';
 
 const Song: FC = () => {
   const {params} = useRoute<RouteProp<StackParamList>>();
   const {fontSize, textAlign} = useConfig();
+  const {addToHistory} = useHistory();
   const opacityRef = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (params?.number) {
+      addToHistory(params.number);
+    }
+  }, [params.number]);
 
   const handleTouch = useCallback(() => {
     Animated.timing(opacityRef, {

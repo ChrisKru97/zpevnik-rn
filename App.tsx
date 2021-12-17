@@ -11,6 +11,7 @@ import {
   ModalProvider,
   ThemeProvider,
   ConfigProvider,
+  HistoryProvider,
 } from './src/providers';
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -20,21 +21,23 @@ const App: FC = () => {
     <ThemeProvider>
       <AuthProvider>
         <SongListProvider>
-          <ConfigProvider>
-            <ModalProvider>
+          <HistoryProvider>
+            <ConfigProvider>
               <CustomStatusBar />
               <NavigationContainer>
-                <Stack.Navigator
-                  initialRouteName="Home"
-                  screenOptions={{headerShown: false}}>
-                  <Stack.Screen name="Home" component={Home} />
-                  <Stack.Screen name="History" component={History} />
-                  <Stack.Screen name="Favorites" component={Favorites} />
-                  <Stack.Screen name="Song" component={Song} />
-                </Stack.Navigator>
+                <ModalProvider>
+                  <Stack.Navigator
+                    initialRouteName="Home"
+                    screenOptions={{headerShown: false}}>
+                    <Stack.Screen name="Home" component={Home} />
+                    <Stack.Screen name="History" component={History} />
+                    <Stack.Screen name="Favorites" component={Favorites} />
+                    <Stack.Screen name="Song" component={Song} />
+                  </Stack.Navigator>
+                </ModalProvider>
               </NavigationContainer>
-            </ModalProvider>
-          </ConfigProvider>
+            </ConfigProvider>
+          </HistoryProvider>
         </SongListProvider>
       </AuthProvider>
     </ThemeProvider>

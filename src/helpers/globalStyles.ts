@@ -19,4 +19,7 @@ export const globalStyles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
   },
+  spaceAround: {
+    justifyContent: 'space-around',
+  },
 });

@@ -1,17 +1,11 @@
 import {IconOutline} from '@ant-design/icons-react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {FC, useMemo, useState} from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import {FC, useMemo} from 'react';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Heart} from '.';
 import {globalStyles} from '../helpers/globalStyles';
-import {SPACING, spacing} from '../helpers/spacing';
+import {spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useTheme} from '../hooks';
 
@@ -25,6 +19,7 @@ const createStyles = (colors: Theme, safeTop: number) =>
     },
     title: {
       color: 'white',
+      fontSize: 25,
     },
     alignCenter: {
       textAlign: 'center',
@@ -42,20 +37,15 @@ interface Props {
 }
 
 const ICON_SIZE = 22;
-const DEFAULT_FONT_SIZE = 25;
 
 const Header: FC<Props> = ({title: titleProp, number}) => {
   const {colors} = useTheme();
   const {top} = useSafeAreaInsets();
-  const {width} = useWindowDimensions();
   const styles = createStyles(colors, top);
   const {name} = useRoute();
   const navigation = useNavigation();
-  const [fontSize, setFontSize] = useState<number>(DEFAULT_FONT_SIZE);
 
   const isRoot = name === 'Home';
-
-  // const maxWidth = isRoot ? width : width - (ICON_SIZE + 6 * SPACING);
 
   const title = useMemo(() => {
     if (titleProp) {
@@ -76,11 +66,14 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
       <View style={styles.spacer} />
       <View
         style={[
+          globalStyles.flex,
           styles.wrapper,
           globalStyles.row,
-          !!number && globalStyles.spaceBetween,
+          globalStyles.spaceBetween,
         ]}>
-        {!isRoot && (
+        {isRoot ? (
+          <View style={globalStyles.flex} />
+        ) : (
           <Pressable onPress={navigation.goBack}>
             <IconOutline
               style={spacing.mx4}
@@ -90,20 +83,12 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
             />
           </Pressable>
         )}
-        <Text
-          // onLayout={e => {
-          //   if (e.nativeEvent.layout.width > maxWidth) {
-          //     setFontSize(fontSize - 1);
-          //   }
-          // }}
-          style={[
-            styles.title,
-            isRoot && [styles.alignCenter, globalStyles.flex],
-            {fontSize},
-          ]}>
+        <Text numberOfLines={1} style={styles.title}>
           {title}
         </Text>
-        {number && (
+        {isRoot || !number ? (
+          <View style={globalStyles.flex} />
+        ) : (
           <Heart number={number} style={spacing.mx4} color="white" size={22} />
         )}
       </View>

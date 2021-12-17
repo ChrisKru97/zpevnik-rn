@@ -10,6 +10,7 @@ import {ListItem, BottomBar, Header} from '../components';
 import {BOTTOM_BAR_HEIGHT} from '../components/BottomBar';
 import {HEADER_HEIGHT} from '../components/Header';
 import {globalStyles} from '../helpers/globalStyles';
+import {SPACING} from '../helpers/spacing';
 import {useSongList} from '../hooks';
 
 const styles = StyleSheet.create({
@@ -28,7 +29,7 @@ const Home: FC = () => {
         ListFooterComponent={<View style={styles.footer} />}
         refreshControl={
           <RefreshControl
-            progressViewOffset={HEADER_HEIGHT}
+            progressViewOffset={HEADER_HEIGHT + SPACING * 4}
             refreshing={loading}
             onRefresh={refetch}
           />

@@ -2,7 +2,7 @@ import {createContext, FC, useState} from 'react';
 import {NumberInputModal, SearchModal} from '../components';
 import {ModalType} from '../helpers/types';
 
-type ModalContextType = (type: ModalType) => void;
+type ModalContextType = (type?: ModalType) => void;
 
 export const ModalContext = createContext<ModalContextType>(() => null);
 

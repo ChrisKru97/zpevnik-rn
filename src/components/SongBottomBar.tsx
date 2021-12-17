@@ -5,44 +5,67 @@ import {Animated, Easing, Pressable, StyleSheet, View} from 'react-native';
 import {TextAlignButtons} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
-import {useConfig} from '../hooks';
+import {Theme} from '../helpers/theme';
+import {useConfig, useTheme} from '../hooks';
 
-const styles = StyleSheet.create({
-  shadow: {
-    backgroundColor: 'white',
-    elevation: 4,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
-  switch: {
-    borderRadius: 20,
-    backgroundColor: 'white',
-    elevation: 3,
-  },
-  switchWrapper: {
-    position: 'absolute',
-    top: -50,
-    width: '100%',
-    alignItems: 'center',
-  },
-});
+const createStyles = (colors: Theme) =>
+  StyleSheet.create({
+    border: {
+      borderColor: colors.gray,
+      borderWidth: 1,
+    },
+    wrapper: {
+      position: 'absolute',
+      bottom: 0,
+      backgroundColor: 'white',
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+    },
+    switch: {
+      borderRadius: 20,
+      backgroundColor: 'white',
+    },
+    switchWrapper: {
+      position: 'absolute',
+      top: -50,
+      width: '100%',
+      alignItems: 'center',
+    },
+  });
 
-const SongBottomBar: FC = () => {
-  const [open, setOpen] = useState<boolean>(true);
-  const [height, setHeight] = useState<number>(0);
+interface Props {
+  opacityRef: Animated.Value;
+}
+
+const SongBottomBar: FC<Props> = ({opacityRef}) => {
+  const {colors} = useTheme();
+  const styles = createStyles(colors);
+  const [open, setOpen] = useState<boolean>(false);
+  const [height, setHeight] = useState<number>(100);
   const {fontSize, setFontSize} = useConfig();
   const slideRef = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    if (height) {
+      slideRef.setValue(height);
+    }
+  }, [height, slideRef]);
+
+  useEffect(() => {
+    if (!height) {
+      return;
+    }
     if (open) {
       Animated.timing(slideRef, {
         toValue: 0,
+        duration: 1000,
         easing: Easing.bounce,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(slideRef, {
         toValue: height,
+        duration: 1000,
         easing: Easing.bounce,
         useNativeDriver: true,
       }).start();
@@ -53,15 +76,26 @@ const SongBottomBar: FC = () => {
     <Animated.View
       onLayout={e => setHeight(e.nativeEvent.layout.height)}
       style={[
-        styles.shadow,
+        styles.wrapper,
+        styles.border,
         spacing.p4,
+        spacing.mx1,
         globalStyles.row,
         {transform: [{translateY: slideRef}]},
+        !open && {opacity: opacityRef},
       ]}>
       <View style={styles.switchWrapper}>
         <Pressable
-          style={[styles.switch, spacing.p2]}
-          onPress={() => setOpen(!open)}>
+          style={[styles.switch, styles.border, spacing.p2]}
+          onPress={() => {
+            opacityRef.setValue(open ? 1 : 0);
+            Animated.timing(opacityRef, {
+              toValue: open ? 0 : 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }).start();
+            setOpen(!open);
+          }}>
           <IconOutline name={open ? 'down' : 'up'} size={20} />
         </Pressable>
       </View>

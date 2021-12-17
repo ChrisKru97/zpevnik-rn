@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import deburr from 'lodash.deburr';
 import {Song} from '../helpers/types';
 import {useAuth} from '../hooks';
 
@@ -18,6 +19,7 @@ type SongListContextType = {
   switchFavorite: (number: number) => void;
   refetch: () => void;
   loading: boolean;
+  search: (value: string) => void;
 };
 
 const SONGS_KEY = '@songs';
@@ -32,6 +34,20 @@ const SongListProvider: FC = ({children}) => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchString, setSearchString] = useState<string>();
+
+  const songsFiltered = useMemo(
+    () =>
+      !searchString
+        ? songs
+        : songs.filter(
+            song =>
+              deburr(song.withoutChords.toLowerCase()).includes(searchString) ||
+              song.number.toString().includes(searchString) ||
+              deburr(song.name.toLowerCase()).includes(searchString),
+          ),
+    [searchString, songs],
+  );
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -91,14 +107,22 @@ const SongListProvider: FC = ({children}) => {
 
   const state = useMemo(
     () => ({
-      songs,
+      songs: songsFiltered,
       favorites,
       favoritesSongs,
       switchFavorite,
       loading,
       refetch: loadData,
+      search: (text: string) => setSearchString(deburr(text.toLowerCase())),
     }),
-    [songs, loading, favorites, loadData, switchFavorite, favoritesSongs],
+    [
+      songsFiltered,
+      favorites,
+      favoritesSongs,
+      switchFavorite,
+      loading,
+      loadData,
+    ],
   );
 
   return (

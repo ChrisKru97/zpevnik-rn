@@ -19,4 +19,5 @@ export type StackParamList = {
 export enum ModalType {
   search = 'search',
   numberInput = 'numberInput',
+  settings = 'settings',
 }

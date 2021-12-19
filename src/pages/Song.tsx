@@ -9,7 +9,7 @@ import {useConfig, useHistory} from '../hooks';
 
 const Song: FC = () => {
   const {params} = useRoute<RouteProp<StackParamList>>();
-  const {fontSize, textAlign} = useConfig();
+  const {fontSize, textAlign, showChords} = useConfig();
   const {addToHistory} = useHistory();
   const opacityRef = useRef(new Animated.Value(1)).current;
 
@@ -44,7 +44,8 @@ const Song: FC = () => {
     return null;
   }
 
-  const {name, withChords, number} = params;
+  const {name, withChords, withoutChords, number} = params;
+  const songText = showChords ? withChords : withoutChords;
 
   return (
     <View style={globalStyles.flex}>
@@ -56,7 +57,7 @@ const Song: FC = () => {
         stickyHeaderHiddenOnScroll>
         <Header title={name} number={number} />
         <Text style={[globalStyles.text, spacing.p2, {fontSize, textAlign}]}>
-          {withChords}
+          {songText}
         </Text>
       </ScrollView>
       <SongBottomBar opacityRef={opacityRef} />

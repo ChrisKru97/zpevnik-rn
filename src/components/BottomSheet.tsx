@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const BottomSheet: FC<ModalProps> = ({children, ...rest}) => {
+const BottomSheet: FC<ModalProps> = ({children, style, ...rest}) => {
   const setModalOpen = useModal();
   return (
     <Modal
@@ -24,7 +24,9 @@ const BottomSheet: FC<ModalProps> = ({children, ...rest}) => {
       transparent
       onRequestClose={() => setModalOpen(undefined)}
       {...rest}>
-      <View style={[styles.body, spacing.p4, spacing.mx4]}>{children}</View>
+      <View style={[styles.body, spacing.p4, spacing.mx4, style]}>
+        {children}
+      </View>
     </Modal>
   );
 };

@@ -47,13 +47,17 @@ const items: Item[] = [
     screen: 'History',
   },
   {
-    icon: 'edit',
-    screen: 'Edit',
+    icon: 'setting',
+    modal: ModalType.settings,
   },
-  {
-    icon: 'user',
-    screen: 'Account',
-  },
+  // {
+  //   icon: 'edit',
+  //   screen: 'Edit',
+  // },
+  // {
+  //   icon: 'user',
+  //   screen: 'Account',
+  // },
 ];
 
 const BottomBar = () => {

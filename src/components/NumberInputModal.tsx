@@ -1,11 +1,11 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {FC, useState} from 'react';
 import {ModalProps, View} from 'react-native';
-import {BottomSheet, Button, Input} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {StackParamList} from '../helpers/types';
 import {useModal, useSongList} from '../hooks';
+import {BottomSheet, Button, Input} from '.';
 
 const NumberInputModal: FC<ModalProps> = props => {
   const [number, setNumber] = useState<number>();

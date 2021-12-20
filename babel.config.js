@@ -1,8 +1,8 @@
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset'],
-  plugins: [
+  presets: [
+    'module:metro-react-native-babel-preset',
     [
-      '@babel/plugin-transform-react-jsx',
+      '@babel/preset-react',
       {
         runtime: 'automatic',
       },

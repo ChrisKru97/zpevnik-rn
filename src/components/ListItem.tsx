@@ -1,10 +1,10 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {FC} from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
-import {Heart} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {Song, StackParamList} from '../helpers/types';
+import {Heart} from '.';
 
 export const ITEM_HEIGHT = 54.5;
 

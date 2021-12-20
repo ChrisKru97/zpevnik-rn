@@ -34,14 +34,13 @@ const HistoryProvider: FC = ({children}) => {
     loadHistory();
   }, [loadHistory]);
 
-  const addToHistory = useCallback(
-    (number: number) => {
-      const nextHistory = [...new Set([number, ...history])].slice(0, 100);
+  const addToHistory = useCallback((number: number) => {
+    setHistory(prevHistory => {
+      const nextHistory = [...new Set([number, ...prevHistory])].slice(0, 100);
       AsyncStorageLib.setItem(HISTORY_KEY, JSON.stringify(nextHistory));
-      setHistory(nextHistory);
-    },
-    [history],
-  );
+      return nextHistory;
+    });
+  }, []);
 
   const state = useMemo(
     () => ({

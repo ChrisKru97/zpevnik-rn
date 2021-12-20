@@ -1,8 +1,8 @@
 import {StyleSheet, View} from 'react-native';
 import {IconOutline, OutlineGlyphMapType} from '@ant-design/icons-react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useModal} from '../hooks';
 import {ModalType, StackParamList} from '../helpers/types';
 

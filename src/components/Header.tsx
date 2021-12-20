@@ -3,11 +3,11 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {FC, useMemo} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Heart} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useTheme} from '../hooks';
+import {Heart} from '.';
 
 export const HEADER_HEIGHT = 55;
 

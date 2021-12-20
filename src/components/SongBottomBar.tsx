@@ -2,11 +2,11 @@ import {IconOutline} from '@ant-design/icons-react-native';
 import {Slider} from '@miblanchard/react-native-slider';
 import {FC, useEffect, useRef, useState} from 'react';
 import {Animated, Easing, Pressable, StyleSheet, View} from 'react-native';
-import {TextAlignButtons} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useConfig, useTheme} from '../hooks';
+import {TextAlignButtons} from '.';
 
 const createStyles = (colors: Theme) =>
   StyleSheet.create({

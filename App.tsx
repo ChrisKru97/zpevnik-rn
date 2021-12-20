@@ -16,31 +16,29 @@ import {
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App: FC = () => {
-  return (
-    <ThemeProvider>
-      <AuthProvider>
-        <SongListProvider>
-          <HistoryProvider>
-            <ConfigProvider>
-              <CustomStatusBar />
-              <NavigationContainer>
-                <ModalProvider>
-                  <Stack.Navigator
-                    initialRouteName="Home"
-                    screenOptions={{headerShown: false}}>
-                    <Stack.Screen name="Home" component={Home} />
-                    <Stack.Screen name="History" component={History} />
-                    <Stack.Screen name="Favorites" component={Favorites} />
-                    <Stack.Screen name="Song" component={Song} />
-                  </Stack.Navigator>
-                </ModalProvider>
-              </NavigationContainer>
-            </ConfigProvider>
-          </HistoryProvider>
-        </SongListProvider>
-      </AuthProvider>
-    </ThemeProvider>
-  );
-};
+const App: FC = () => (
+  <ThemeProvider>
+    <AuthProvider>
+      <SongListProvider>
+        <HistoryProvider>
+          <ConfigProvider>
+            <CustomStatusBar />
+            <NavigationContainer>
+              <ModalProvider>
+                <Stack.Navigator
+                  initialRouteName="Home"
+                  screenOptions={{headerShown: false}}>
+                  <Stack.Screen name="Home" component={Home} />
+                  <Stack.Screen name="History" component={History} />
+                  <Stack.Screen name="Favorites" component={Favorites} />
+                  <Stack.Screen name="Song" component={Song} />
+                </Stack.Navigator>
+              </ModalProvider>
+            </NavigationContainer>
+          </ConfigProvider>
+        </HistoryProvider>
+      </SongListProvider>
+    </AuthProvider>
+  </ThemeProvider>
+);
 export default App;

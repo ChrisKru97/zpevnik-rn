@@ -17,7 +17,7 @@ const Song: FC = () => {
     if (params?.number) {
       addToHistory(params.number);
     }
-  }, [params.number]);
+  }, [addToHistory, params?.number]);
 
   const handleTouch = useCallback(() => {
     Animated.timing(opacityRef, {

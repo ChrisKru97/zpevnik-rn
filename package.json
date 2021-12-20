@@ -1,11 +1,11 @@
 {
   "name": "zpevnik",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@ant-design/icons-react-native": "^2.3.2",
@@ -33,7 +33,12 @@
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "babel-plugin-react-native-web": "^0.17.5",
     "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react-native": "^4.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "metro-react-native-babel-preset": "^0.66.2",
     "typescript": "^4.5.4"
   },

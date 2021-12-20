@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import {ModalProps, Switch, Text, View} from 'react-native';
-import {BottomSheet, Button} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {useConfig, useModal, useTheme} from '../hooks';
+import {BottomSheet, Button} from '.';
 
 const SettingsModal: FC<ModalProps> = props => {
   const {showChords, setShowChords} = useConfig();

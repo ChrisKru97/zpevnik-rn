@@ -1,9 +1,9 @@
 import {FC} from 'react';
 import {ModalProps, View} from 'react-native';
-import {BottomSheet, Button, Input} from '.';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {useModal, useSongList} from '../hooks';
+import {BottomSheet, Button, Input} from '.';
 
 const SearchModal: FC<ModalProps> = props => {
   const {search, searchValue} = useSongList();

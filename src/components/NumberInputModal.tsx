@@ -1,13 +1,17 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {FC, useCallback, useState} from 'react';
-import {ModalProps, View} from 'react-native';
+import {View} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {StackParamList} from '../helpers/types';
 import {useModal, useSongList} from '../hooks';
 import {BottomSheet, Button, Input} from '.';
 
-const NumberInputModal: FC<ModalProps> = props => {
+interface Props {
+  visible: boolean;
+}
+
+const NumberInputModal: FC<Props> = ({visible}) => {
   const [number, setNumber] = useState<number>();
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const setModalOpen = useModal();
@@ -27,11 +31,11 @@ const NumberInputModal: FC<ModalProps> = props => {
   }, [navigation, number, setModalOpen, songs]);
 
   return (
-    <BottomSheet {...props}>
+    <BottomSheet visible={visible}>
       <Input
         onSubmitEditing={submit}
         keyboardType="numeric"
-        autoFocus
+        autoFocus={visible}
         style={spacing.mb4}
         value={number?.toString() ?? ''}
         onChangeText={value => {

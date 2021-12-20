@@ -1,7 +1,13 @@
 import {IconOutline} from '@ant-design/icons-react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {FC, useMemo} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
@@ -19,7 +25,6 @@ const createStyles = (colors: Theme, safeTop: number) =>
     },
     title: {
       color: 'white',
-      fontSize: 25,
     },
     alignCenter: {
       textAlign: 'center',
@@ -44,6 +49,7 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
   const styles = createStyles(colors, top);
   const {name} = useRoute();
   const navigation = useNavigation();
+  const {width} = useWindowDimensions();
 
   const isRoot = name === 'Home';
 
@@ -83,9 +89,16 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
             />
           </Pressable>
         )}
-        <Text numberOfLines={1} style={styles.title}>
-          {title}
-        </Text>
+        {title && (
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.title,
+              {fontSize: 1.5 * (width / Math.max(20, title?.length))},
+            ]}>
+            {title}
+          </Text>
+        )}
         {isRoot || !number ? (
           <View style={globalStyles.flex} />
         ) : (

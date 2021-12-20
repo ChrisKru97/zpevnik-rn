@@ -1,44 +1,68 @@
-import {FC} from 'react';
-import {Modal, ModalProps, StyleSheet, View} from 'react-native';
+import {FC, useEffect, useRef, useState} from 'react';
+import {Animated, StyleProp, StyleSheet, ViewStyle} from 'react-native';
 import {spacing} from '../helpers/spacing';
-import {useModal, useTheme} from '../hooks';
+import {useTheme} from '../hooks';
 
 const styles = StyleSheet.create({
   body: {
+    zIndex: 10,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
-    elevation: 4,
+    elevation: 6,
   },
 });
 
-const BottomSheet: FC<ModalProps> = ({children, style, ...rest}) => {
-  const setModalOpen = useModal();
+interface Props {
+  visible: boolean;
+  style?: StyleProp<ViewStyle>;
+}
+
+const BottomSheet: FC<Props> = ({children, visible, style}) => {
   const {colors, isDarkMode} = useTheme();
+  const [height, setHeight] = useState<number>(100);
+  const animationRef = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (visible) {
+      Animated.timing(animationRef, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(animationRef, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [animationRef, visible]);
+
+  const translateY = animationRef.interpolate({
+    inputRange: [0, 1],
+    outputRange: [height, 0],
+  });
+
   return (
-    <Modal
-      animationType="slide"
-      transparent
-      onRequestClose={() => setModalOpen(undefined)}
-      {...rest}>
-      <View
-        style={[
-          styles.body,
-          spacing.p4,
-          spacing.mx4,
-          {
-            backgroundColor: isDarkMode
-              ? colors.primarySoft
-              : colors.background,
-          },
-          style,
-        ]}>
-        {children}
-      </View>
-    </Modal>
+    <Animated.View
+      onLayout={e => setHeight(e.nativeEvent.layout.height)}
+      style={[
+        styles.body,
+        spacing.p4,
+        spacing.mx4,
+        {
+          transform: [{translateY}],
+          opacity: animationRef,
+          backgroundColor: isDarkMode ? colors.primarySoft : colors.background,
+        },
+        style,
+      ]}>
+      {children}
+    </Animated.View>
   );
 };
 

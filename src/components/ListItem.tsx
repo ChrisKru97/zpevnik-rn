@@ -4,7 +4,7 @@ import {Pressable, StyleSheet, Text} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {Song, StackParamList} from '../helpers/types';
-import {useTheme} from '../hooks';
+import {useModal, useTheme} from '../hooks';
 import {Heart} from '.';
 
 export const ITEM_HEIGHT = 54.5;
@@ -20,11 +20,13 @@ const styles = StyleSheet.create({
 const ListItem: FC<Song> = song => {
   const {name, number} = song;
   const {colors} = useTheme();
+  const setModalOpen = useModal();
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   return (
     <Pressable
       onPress={() => {
+        setModalOpen(undefined);
         navigation.navigate('Song', song);
       }}
       style={[

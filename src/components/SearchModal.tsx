@@ -1,20 +1,24 @@
 import {FC} from 'react';
-import {ModalProps, View} from 'react-native';
+import {View} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {useModal, useSongList} from '../hooks';
 import {BottomSheet, Button, Input} from '.';
 
-const SearchModal: FC<ModalProps> = props => {
+interface Props {
+  visible: boolean;
+}
+
+const SearchModal: FC<Props> = ({visible}) => {
   const {search, searchValue} = useSongList();
   const setModalOpen = useModal();
   return (
-    <BottomSheet {...props}>
+    <BottomSheet visible={visible}>
       <Input
         onSubmitEditing={() => setModalOpen(undefined)}
-        autoFocus
+        autoFocus={visible}
         style={spacing.mb4}
-        defaultValue={searchValue}
+        value={searchValue}
         onChangeText={search}
       />
       <View style={[globalStyles.row, globalStyles.spaceAround]}>

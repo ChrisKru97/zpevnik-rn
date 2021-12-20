@@ -1,16 +1,20 @@
 import {FC} from 'react';
-import {ModalProps, Switch, Text, View} from 'react-native';
+import {Switch, Text, View} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {useConfig, useModal, useTheme} from '../hooks';
 import {BottomSheet, Button} from '.';
 
-const SettingsModal: FC<ModalProps> = props => {
+interface Props {
+  visible: boolean;
+}
+
+const SettingsModal: FC<Props> = ({visible}) => {
   const {showChords, setShowChords} = useConfig();
   const {isDarkMode, setDarkMode, colors} = useTheme();
   const setModalOpen = useModal();
   return (
-    <BottomSheet {...props} style={globalStyles.alignCenter}>
+    <BottomSheet visible={visible} style={globalStyles.alignCenter}>
       <View style={[globalStyles.row, spacing.mb4]}>
         <Text style={[globalStyles.text, {color: colors.black}]}>
           Ukázat akordy

@@ -74,7 +74,7 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
         {isRoot ? (
           <View style={globalStyles.flex} />
         ) : (
-          <Pressable onPress={navigation.goBack}>
+          <Pressable onPress={navigation.goBack} hitSlop={16}>
             <IconOutline
               style={spacing.mx4}
               name="left"

@@ -11,6 +11,7 @@ const SearchModal: FC<ModalProps> = props => {
   return (
     <BottomSheet {...props}>
       <Input
+        onSubmitEditing={() => setModalOpen(undefined)}
         autoFocus
         style={spacing.mb4}
         defaultValue={searchValue}

@@ -10,6 +10,7 @@ const createStyles = (colors: Theme) =>
       borderRadius: 6,
       borderWidth: 1,
       borderColor: colors.black,
+      color: colors.black,
     },
   });
 

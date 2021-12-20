@@ -7,21 +7,35 @@ import {BottomSheet, Button} from '.';
 
 const SettingsModal: FC<ModalProps> = props => {
   const {showChords, setShowChords} = useConfig();
-  const {isDarkMode, setDarkMode} = useTheme();
+  const {isDarkMode, setDarkMode, colors} = useTheme();
   const setModalOpen = useModal();
   return (
     <BottomSheet {...props} style={globalStyles.alignCenter}>
       <View style={[globalStyles.row, spacing.mb4]}>
-        <Text style={globalStyles.text}>Ukázat akordy</Text>
+        <Text style={[globalStyles.text, {color: colors.black}]}>
+          Ukázat akordy
+        </Text>
         <Switch
+          trackColor={{
+            false: colors.gray,
+            true: colors.gray,
+          }}
+          thumbColor={isDarkMode ? colors.black : colors.primarySoft}
           style={spacing.ml4}
           value={showChords}
           onValueChange={setShowChords}
         />
       </View>
       <View style={[globalStyles.row, spacing.mb4]}>
-        <Text style={globalStyles.text}>Tmavý režim</Text>
+        <Text style={[globalStyles.text, {color: colors.black}]}>
+          Tmavý režim
+        </Text>
         <Switch
+          trackColor={{
+            false: colors.gray,
+            true: colors.gray,
+          }}
+          thumbColor={isDarkMode ? colors.black : colors.primarySoft}
           style={spacing.ml4}
           value={isDarkMode}
           onValueChange={setDarkMode}

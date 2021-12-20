@@ -13,7 +13,6 @@ export const globalStyles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    color: 'black',
     fontSize: 16,
   },
   alignCenter: {

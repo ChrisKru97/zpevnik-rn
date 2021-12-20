@@ -1,5 +1,5 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {FC, useState} from 'react';
+import {FC, useCallback, useState} from 'react';
 import {ModalProps, View} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
@@ -13,9 +13,23 @@ const NumberInputModal: FC<ModalProps> = props => {
   const setModalOpen = useModal();
   const {songs} = useSongList();
 
+  const submit = useCallback(() => {
+    if (!number) {
+      return;
+    }
+    const song = songs.find(item => number === item.number);
+    if (!song) {
+      return;
+    }
+    navigation.navigate('Song', song);
+    setNumber(undefined);
+    setModalOpen(undefined);
+  }, [navigation, number, setModalOpen, songs]);
+
   return (
     <BottomSheet {...props}>
       <Input
+        onSubmitEditing={submit}
         keyboardType="numeric"
         autoFocus
         style={spacing.mb4}
@@ -35,21 +49,7 @@ const NumberInputModal: FC<ModalProps> = props => {
         }}
       />
       <View style={[globalStyles.row, globalStyles.spaceAround]}>
-        <Button
-          text="Otevřít"
-          onPress={() => {
-            if (!number) {
-              return;
-            }
-            const song = songs.find(item => number === item.number);
-            if (!song) {
-              return;
-            }
-            navigation.navigate('Song', song);
-            setNumber(undefined);
-            setModalOpen(undefined);
-          }}
-        />
+        <Button text="Otevřít" onPress={submit} />
         <Button
           text="Zrušit"
           onPress={() => {

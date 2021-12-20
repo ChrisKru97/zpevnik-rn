@@ -5,12 +5,13 @@ import {Header, SongBottomBar} from '../components';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {StackParamList} from '../helpers/types';
-import {useConfig, useHistory} from '../hooks';
+import {useConfig, useHistory, useTheme} from '../hooks';
 
 const Song: FC = () => {
   const {params} = useRoute<RouteProp<StackParamList>>();
   const {fontSize, textAlign, showChords} = useConfig();
   const {addToHistory} = useHistory();
+  const {colors} = useTheme();
   const opacityRef = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -56,7 +57,12 @@ const Song: FC = () => {
         showsVerticalScrollIndicator={false}
         stickyHeaderHiddenOnScroll>
         <Header title={name} number={number} />
-        <Text style={[globalStyles.text, spacing.p2, {fontSize, textAlign}]}>
+        <Text
+          style={[
+            globalStyles.text,
+            spacing.p2,
+            {fontSize, textAlign, color: colors.black},
+          ]}>
           {songText}
         </Text>
       </ScrollView>

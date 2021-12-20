@@ -3,7 +3,7 @@ import {Slider} from '@miblanchard/react-native-slider';
 import {FC, useEffect, useRef, useState} from 'react';
 import {Animated, Easing, Pressable, StyleSheet, View} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
-import {spacing} from '../helpers/spacing';
+import {SPACING, spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useConfig, useTheme} from '../hooks';
 import {TextAlignButtons} from '.';
@@ -28,6 +28,7 @@ const createStyles = (colors: Theme) =>
     switchWrapper: {
       position: 'absolute',
       top: -50,
+      left: SPACING * 4,
       width: '100%',
       alignItems: 'center',
     },

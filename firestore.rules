@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isValidSong(noNumber) {
+      let noNumberKeyList = ['name', 'withChords', 'withoutChords', 'checkRequired'];
+      let keyList = noNumberKeyList.concat(['number']);
+      return request.resource.data.keys().hasOnly(keyList) &&
+        request.resource.data.keys().hasAll(noNumber ? noNumberKeyList : keyList);
+    }
+    
+  	match /songs/{song} {
+      allow read: if request.auth != null;
+      allow update: if request.auth != null &&
+				isValidSong(request.resource.data.checkRequired) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' && (
+        request.resource.data.checkRequired ||
+        request.resource.data.number == resource.data.number
+        );
+      allow create: if request.auth != null &&
+        isValidSong(true) &&
+        ('number' in request.resource.data.keys()) == false &&
+        request.resource.data.checkRequired == true;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

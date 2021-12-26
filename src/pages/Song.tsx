@@ -1,15 +1,16 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {FC, useCallback, useEffect, useRef} from 'react';
-import {Animated, ScrollView, Text, View} from 'react-native';
+import {Animated, AppState, ScrollView, Text, View} from 'react-native';
 import {Header, SongBottomBar} from '../components';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {StackParamList} from '../helpers/types';
-import {useConfig, useHistory, useTheme} from '../hooks';
+import {useAuth, useConfig, useHistory, useTheme} from '../hooks';
 
 const Song: FC = () => {
   const {params} = useRoute<RouteProp<StackParamList>>();
   const {fontSize, textAlign, showChords} = useConfig();
+  const {openSong} = useAuth();
   const {addToHistory} = useHistory();
   const {colors} = useTheme();
   const opacityRef = useRef(new Animated.Value(1)).current;
@@ -19,6 +20,20 @@ const Song: FC = () => {
       addToHistory(params.number);
     }
   }, [addToHistory, params?.number]);
+
+  useEffect(() => {
+    openSong(params?.number);
+    AppState.addEventListener('change', value => {
+      if (value === 'active') {
+        openSong(params?.number);
+      } else {
+        openSong();
+      }
+    });
+    return () => {
+      openSong(undefined);
+    };
+  }, [openSong, params]);
 
   const handleTouch = useCallback(() => {
     Animated.timing(opacityRef, {

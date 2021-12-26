@@ -31,7 +31,7 @@ export const SongListContext = createContext<SongListContextType>(
 );
 
 const SongListProvider: FC = ({children}) => {
-  const isLoggedIn = useAuth();
+  const {isLoggedIn} = useAuth();
   const [songs, setSongs] = useState<Song[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

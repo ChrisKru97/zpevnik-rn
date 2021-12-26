@@ -1,23 +1,127 @@
 import auth from '@react-native-firebase/auth';
-import {createContext, FC, useCallback, useEffect, useState} from 'react';
+import firestore from '@react-native-firebase/firestore';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  createContext,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {AppState} from 'react-native';
+import {LoginType} from '../helpers/types';
 
-export const AuthContext = createContext(false);
+interface AuthContextInterface {
+  isLoggedIn: boolean;
+  loginType: LoginType;
+  openSong: (songNumber?: number) => void;
+  signIn: (email: string, password: string) => void;
+  signInWithGoogle: () => void;
+}
+
+export const AuthContext = createContext<AuthContextInterface>(
+  {} as AuthContextInterface,
+);
+
+GoogleSignin.configure();
 
 const AuthProvider: FC = ({children}) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loginId, setLoginId] = useState<string>();
+  const [loginType, setLoginType] = useState<LoginType>(LoginType.Anonymous);
 
   const signIn = useCallback(async () => {
-    await auth().signInAnonymously();
-    setLoggedIn(true);
+    const {
+      user: {uid},
+    } = await auth().signInAnonymously();
+    setLoginId(uid);
+    setLoginType(LoginType.Anonymous);
   }, []);
 
   useEffect(() => {
-    signIn();
-  }, [signIn]);
+    if (!loginId) {
+      signIn();
+    }
+  }, [loginId, signIn]);
 
-  return (
-    <AuthContext.Provider value={loggedIn}>{children}</AuthContext.Provider>
+  const signInWithCredentials = useCallback(
+    async (email: string, password: string) => {
+      const {
+        user: {uid},
+      } = await auth().signInWithEmailAndPassword(email, password);
+      setLoginId(uid);
+      setLoginType(LoginType.Mail);
+    },
+    [],
   );
+
+  const signInWithGoogle = useCallback(async () => {
+    const res = await GoogleSignin.signIn();
+    const googleCredential = auth.GoogleAuthProvider.credential(res.idToken);
+    const {
+      user: {uid},
+    } = await auth().signInWithCredential(googleCredential);
+    setLoginId(uid);
+    setLoginType(LoginType.Google);
+  }, []);
+
+  const activeEntity = useMemo(
+    () => (loginId ? firestore().collection('active').doc(loginId) : undefined),
+    [loginId],
+  );
+
+  const updateActiveEntity = useCallback(
+    (data: {songNumber?: number | null; active?: boolean}) =>
+      activeEntity?.update(data),
+    [activeEntity],
+  );
+
+  const createActiveEntity = useCallback(async () => {
+    const data = await firestore().collection('users').doc(loginId).get();
+    const {name, email} = data.data() ?? {};
+    activeEntity?.set({
+      active: true,
+      displayName: name || email,
+    });
+  }, [activeEntity, loginId]);
+
+  useEffect(() => {
+    activeEntity?.get().then(data => {
+      if (data.exists) updateActiveEntity({active: true});
+      else {
+        setTimeout(createActiveEntity, 500);
+      }
+    });
+    AppState.addEventListener('change', value => {
+      if (value === 'active') {
+        updateActiveEntity({active: true});
+      } else {
+        updateActiveEntity({active: false});
+      }
+    });
+    return () => {
+      updateActiveEntity({active: false});
+    };
+  }, [activeEntity, createActiveEntity, updateActiveEntity]);
+
+  const openSong = useCallback(
+    (songNumber?: number) =>
+      updateActiveEntity({songNumber: songNumber || null}),
+    [updateActiveEntity],
+  );
+
+  const state = useMemo(
+    () => ({
+      isLoggedIn: !!loginId,
+      signIn: signInWithCredentials,
+      signInWithGoogle,
+      openSong,
+      loginType,
+    }),
+    [loginId, loginType, openSong, signInWithCredentials, signInWithGoogle],
+  );
+
+  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

@@ -21,3 +21,9 @@ export enum ModalType {
   numberInput = 'numberInput',
   settings = 'settings',
 }
+
+export enum LoginType {
+  Anonymous,
+  Mail,
+  Google,
+}

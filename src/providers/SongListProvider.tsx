@@ -1,26 +1,21 @@
-import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
-import {
-  createContext,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import {createContext, FC, useEffect, useMemo, useState} from 'react';
 import deburr from 'lodash.deburr';
+import {useMMKVObject} from 'react-native-mmkv';
+import Fuse from 'fuse.js';
 import {Song} from '../helpers/types';
 import {useAuth} from '../hooks';
 
 type SongListContextType = {
-  songs: Song[];
-  favorites: number[];
-  favoritesSongs: Song[];
+  songs?: Song[];
+  favorites?: number[];
+  favoritesSongs?: Song[];
   switchFavorite: (number: number) => void;
   refetch: () => void;
   loading: boolean;
   searchValue?: string;
   search: (value: string) => void;
+  getSong: (getNumber: number) => Song | undefined;
 };
 
 const SONGS_KEY = '@songs';
@@ -31,105 +26,79 @@ export const SongListContext = createContext<SongListContextType>(
 );
 
 const SongListProvider: FC = ({children}) => {
+  const [songs, setSongs] = useMMKVObject<Song[]>(SONGS_KEY);
+  const [favorites, setFavorites] = useMMKVObject<number[]>(FAVORITES_KEY);
   const {isLoggedIn} = useAuth();
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchString, setSearchString] = useState<string>('');
 
-  const songsFiltered = useMemo(
-    () =>
-      !searchString
-        ? songs
-        : songs.filter(
-            song =>
-              deburr(song.withoutChords.toLowerCase()).includes(searchString) ||
-              song.number.toString().includes(searchString) ||
-              deburr(song.name.toLowerCase()).includes(searchString),
-          ),
-    [searchString, songs],
-  );
+  const fuse = useMemo(() => {
+    if (!songs?.length) return;
+    return new Fuse(
+      songs.map(s => ({
+        name: deburr(s.withoutChords.toLowerCase()),
+        withoutChords: deburr(s.withoutChords.toLowerCase()),
+        number: s.number,
+      })),
+      {keys: ['withoutChords', 'number', 'name']},
+    );
+  }, [songs]);
 
-  const loadData = useCallback(async () => {
+  const filtered = useMemo(() => {
+    if (!fuse || !songs || !searchString.length) return;
+    const matches = fuse.search(deburr(searchString.toLowerCase()));
+    return matches.map(m => songs[m.refIndex]);
+  }, [fuse, searchString]);
+
+  const loadData = async () => {
     setLoading(true);
     const res = await firestore().collection('songs').orderBy('number').get();
     const nextSongs = res.docs.map(
       doc => ({...doc.data(), id: doc.id} as Song),
     );
     setSongs(nextSongs);
-    AsyncStorageLib.setItem(SONGS_KEY, JSON.stringify(nextSongs));
     setLoading(false);
-  }, []);
+  };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      AsyncStorageLib.getItem(SONGS_KEY).then(json => {
-        if (json) {
-          const data = JSON.parse(json);
-          setSongs(data);
-          setLoading(false);
-        } else {
-          loadData();
-        }
-      });
+    if (isLoggedIn && !songs?.length) {
+      loadData();
     }
-  }, [isLoggedIn, loadData]);
+  }, [isLoggedIn, songs]);
 
-  useEffect(() => {
-    AsyncStorageLib.getItem(FAVORITES_KEY).then(json => {
-      if (!json) {
-        return;
-      }
-      const data = JSON.parse(json);
-      setFavorites(data);
-    });
-  }, []);
-
-  const switchFavorite = useCallback(
-    (number: number) => {
-      let nextFavorites;
-      if (favorites.includes(number)) {
-        nextFavorites = [...favorites].filter(
-          songNumber => songNumber !== number,
-        );
-      } else {
-        nextFavorites = [...favorites, number];
-      }
-      setFavorites(nextFavorites);
-      AsyncStorageLib.setItem(FAVORITES_KEY, JSON.stringify(nextFavorites));
-    },
-    [favorites],
-  );
+  const switchFavorite = (number: number) => {
+    if (!favorites) setFavorites([number]);
+    else if (favorites.includes(number)) {
+      setFavorites([...favorites].filter(songNumber => songNumber !== number));
+    } else {
+      setFavorites([...favorites, number]);
+    }
+  };
 
   const favoritesSongs = useMemo(
-    () => songs.filter(({number}) => favorites.includes(number)),
+    () =>
+      songs && favorites
+        ? songs.filter(({number}) => favorites.includes(number))
+        : undefined,
     [songs, favorites],
   );
 
-  const state = useMemo(
-    () => ({
-      songs: songsFiltered,
-      favorites,
-      favoritesSongs,
-      switchFavorite,
-      loading,
-      refetch: loadData,
-      searchValue: searchString,
-      search: (text: string) => setSearchString(deburr(text.toLowerCase())),
-    }),
-    [
-      songsFiltered,
-      favorites,
-      favoritesSongs,
-      switchFavorite,
-      loading,
-      loadData,
-      searchString,
-    ],
-  );
+  const getSong = (getNumber: number) =>
+    songs?.find(song => song.number === getNumber);
 
   return (
-    <SongListContext.Provider value={state}>
+    <SongListContext.Provider
+      value={{
+        songs: filtered,
+        getSong,
+        favorites,
+        favoritesSongs,
+        switchFavorite,
+        loading,
+        refetch: loadData,
+        searchValue: searchString,
+        search: setSearchString,
+      }}>
       {children}
     </SongListContext.Provider>
   );

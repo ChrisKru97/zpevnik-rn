@@ -1,10 +1,11 @@
 import {Pressable, StyleSheet, View} from 'react-native';
-import {IconOutline, OutlineGlyphMapType} from '@ant-design/icons-react-native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {ReactNode} from 'react';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {useModal, useTheme} from '../hooks';
 import {ModalType, StackParamList} from '../helpers/types';
+import Icons from './Icons';
 
 export const BOTTOM_BAR_HEIGHT = 72;
 
@@ -23,44 +24,36 @@ const styles = StyleSheet.create({
 });
 
 type Item = {
-  icon: OutlineGlyphMapType;
+  Icon: ReactNode;
   screen?: keyof StackParamList;
   modal?: ModalType;
 };
 
-const items: Item[] = [
+const items = Object.freeze<Item[]>([
   {
-    icon: 'heart',
+    Icon: Icons.Heart,
     screen: 'Favorites',
   },
   {
-    icon: 'search',
+    Icon: Icons.Search,
     modal: ModalType.search,
   },
   {
-    icon: 'number',
+    Icon: Icons.Number,
     modal: ModalType.numberInput,
   },
   {
-    icon: 'history',
+    Icon: Icons.History,
     screen: 'History',
   },
   {
-    icon: 'setting',
+    Icon: Icons.Setting,
     modal: ModalType.settings,
   },
-  // {
-  //   icon: 'edit',
-  //   screen: 'Edit',
-  // },
-  // {
-  //   icon: 'user',
-  //   screen: 'Account',
-  // },
-];
+]);
 
 const BottomBar = () => {
-  const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const {navigate} = useNavigation<NavigationProp<StackParamList>>();
   const {colors, isDarkMode} = useTheme();
   const openModal = useModal();
 
@@ -72,13 +65,13 @@ const BottomBar = () => {
         spacing.py4,
         isDarkMode && {backgroundColor: colors.primarySoft},
       ]}>
-      {items.map(({icon, screen, modal}) => (
+      {items.map(({Icon, screen, modal}, index) => (
         <Pressable
           hitSlop={8}
-          key={icon}
+          key={index}
           onPress={() => {
             if (screen) {
-              navigation.navigate(screen);
+              navigate(screen);
             } else if (modal) {
               openModal(modal);
             }
@@ -89,7 +82,7 @@ const BottomBar = () => {
               spacing.p2,
               {backgroundColor: colors.white},
             ]}>
-            <IconOutline color={colors.black} name={icon} size={24} />
+            {Icon}
           </View>
         </Pressable>
       ))}

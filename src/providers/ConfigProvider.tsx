@@ -1,75 +1,46 @@
-import AsyncStorageLib from '@react-native-async-storage/async-storage';
-import {
-  createContext,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import {createContext, FC} from 'react';
 import {TextStyle} from 'react-native';
+import {useMMKVObject} from 'react-native-mmkv';
 
-enum CONFIG_KEY {
-  FontSize = '@fontSize',
-  ShowChords = '@showChords',
-  TextAlign = '@textAlign',
-}
+const CONFIG_KEY = '@config';
 
 type TextAlign = TextStyle['textAlign'];
 
-interface ConfigContextType {
+type Config = {
   fontSize: number;
   showChords: boolean;
   textAlign: TextAlign;
-  setFontSize: (fontSize: number) => void;
-  setShowChords: (showChords: boolean) => void;
-  setTextAlign: (textAlign: TextAlign) => void;
+};
+
+interface ConfigContextType {
+  config: Config;
+  setConfigPart: (partialConfig: Partial<Config>) => void;
 }
+
+const defaultConfig: Config = {
+  fontSize: 20,
+  showChords: false,
+  textAlign: 'center',
+};
 
 export const ConfigContext = createContext<ConfigContextType>(
   {} as ConfigContextType,
 );
 
 const ConfigProvider: FC = ({children}) => {
-  const [fontSize, setFontSize] = useState<number>(20);
-  const [showChords, setShowChords] = useState<boolean>(false);
-  const [textAlign, setTextAlign] = useState<TextAlign>('center');
+  const [config = defaultConfig, setConfig] = useMMKVObject<Config>(CONFIG_KEY);
 
-  const loadConfig = useCallback(async () => {
-    const fontSizeValue = await AsyncStorageLib.getItem(CONFIG_KEY.FontSize);
-    if (fontSizeValue) {
-      setFontSize(+fontSizeValue);
-    }
-    const showChordsValue = await AsyncStorageLib.getItem(
-      CONFIG_KEY.ShowChords,
-    );
-    if (showChordsValue) {
-      setShowChords(showChordsValue === 'true');
-    }
-    const textAlignValue = await AsyncStorageLib.getItem(CONFIG_KEY.TextAlign);
-    if (textAlignValue) {
-      setTextAlign(textAlignValue as TextAlign);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadConfig();
-  }, [loadConfig]);
-
-  const state = useMemo(
-    () => ({
-      fontSize,
-      setFontSize,
-      showChords,
-      setShowChords,
-      textAlign,
-      setTextAlign,
-    }),
-    [fontSize, showChords, textAlign],
-  );
+  const setConfigPart = (partialConfig: Partial<Config>) =>
+    setConfig({...config, ...partialConfig});
 
   return (
-    <ConfigContext.Provider value={state}>{children}</ConfigContext.Provider>
+    <ConfigContext.Provider
+      value={{
+        config,
+        setConfigPart,
+      }}>
+      {children}
+    </ConfigContext.Provider>
   );
 };
 

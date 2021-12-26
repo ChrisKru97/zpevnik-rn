@@ -1,12 +1,11 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {FC, useMemo} from 'react';
+import {FC} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {CustomStatusBar} from './src/components';
 import {StackParamList} from './src/helpers/types';
 import {useTheme} from './src/hooks';
-import {History, Home, Song} from './src/pages';
-import Favorites from './src/pages/Favorites';
+import {History, Home, Song, Account, Favorites} from './src/pages';
 import {
   AuthProvider,
   SongListProvider,
@@ -21,23 +20,19 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const CustomNavigationContainer: FC = ({children}) => {
   const {colors, isDarkMode} = useTheme();
 
-  const navigationTheme = useMemo(
-    () => ({
-      dark: isDarkMode,
-      colors: {
-        background: colors.background,
-        notification: colors.secondary,
-        primary: colors.primary,
-        text: colors.black,
-        border: colors.gray,
-        card: colors.white,
-      },
-    }),
-    [colors, isDarkMode],
-  );
-
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer
+      theme={{
+        dark: isDarkMode,
+        colors: {
+          background: colors.background,
+          notification: colors.secondary,
+          primary: colors.primary,
+          text: colors.black,
+          border: colors.gray,
+          card: colors.white,
+        },
+      }}>
       {children}
     </NavigationContainer>
   );
@@ -70,6 +65,7 @@ const App: FC = () => (
                     <Stack.Screen name="History" component={History} />
                     <Stack.Screen name="Favorites" component={Favorites} />
                     <Stack.Screen name="Song" component={Song} />
+                    <Stack.Screen name="Account" component={Account} />
                   </Stack.Navigator>
                 </ModalProvider>
               </CustomNavigationContainer>

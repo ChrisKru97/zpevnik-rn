@@ -1,12 +1,11 @@
-import {IconOutline} from '@ant-design/icons-react-native';
-import {Slider} from '@miblanchard/react-native-slider';
 import {FC, useEffect, useRef, useState} from 'react';
 import {Animated, Easing, Pressable, StyleSheet, View} from 'react-native';
+import Slider from '@react-native-community/slider';
 import {globalStyles} from '../helpers/globalStyles';
 import {SPACING, spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useConfig, useTheme} from '../hooks';
-import {TextAlignButtons} from '.';
+import {Icons, TextAlignButtons} from '.';
 
 const createStyles = (colors: Theme) =>
   StyleSheet.create({
@@ -43,7 +42,10 @@ const SongBottomBar: FC<Props> = ({opacityRef}) => {
   const styles = createStyles(colors);
   const [open, setOpen] = useState<boolean>(false);
   const [height, setHeight] = useState<number>(100);
-  const {fontSize, setFontSize} = useConfig();
+  const {
+    config: {fontSize},
+    setConfigPart,
+  } = useConfig();
   const slideRef = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -97,14 +99,12 @@ const SongBottomBar: FC<Props> = ({opacityRef}) => {
             }).start();
             setOpen(!open);
           }}>
-          <IconOutline name={open ? 'down' : 'up'} size={20} />
+          <Icons.Left />
         </Pressable>
       </View>
       <Slider
-        onValueChange={value =>
-          setFontSize(Array.isArray(value) ? value[0] : value)
-        }
-        containerStyle={globalStyles.flex}
+        onValueChange={newFontSize => setConfigPart({fontSize: newFontSize})}
+        style={globalStyles.flex}
         value={fontSize}
         minimumValue={10}
         maximumValue={40}

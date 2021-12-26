@@ -1,4 +1,3 @@
-import {IconOutline} from '@ant-design/icons-react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {FC, useMemo} from 'react';
 import {
@@ -13,7 +12,7 @@ import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useTheme} from '../hooks';
-import {Heart} from '.';
+import {Heart, Icons} from '.';
 
 export const HEADER_HEIGHT = 55;
 
@@ -21,6 +20,7 @@ const createStyles = (colors: Theme, safeTop: number) =>
   StyleSheet.create({
     wrapper: {
       height: HEADER_HEIGHT,
+      maxHeight: HEADER_HEIGHT,
       backgroundColor: colors.primary,
     },
     title: {
@@ -64,6 +64,8 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
         return 'Oblíbené';
       case 'History':
         return 'Poslední otevřené';
+      case 'Account':
+        return 'Účet';
     }
   }, [name, number, titleProp]);
 
@@ -81,12 +83,7 @@ const Header: FC<Props> = ({title: titleProp, number}) => {
           <View style={globalStyles.flex} />
         ) : (
           <Pressable onPress={navigation.goBack} hitSlop={16}>
-            <IconOutline
-              style={spacing.mx4}
-              name="left"
-              color="white"
-              size={ICON_SIZE}
-            />
+            <Icons.Left />
           </Pressable>
         )}
         {title && (

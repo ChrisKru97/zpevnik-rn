@@ -1,12 +1,5 @@
-import AsyncStorageLib from '@react-native-async-storage/async-storage';
-import {
-  createContext,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import {createContext, FC} from 'react';
+import {useMMKVObject} from 'react-native-mmkv';
 
 const HISTORY_KEY = '@history';
 
@@ -20,38 +13,15 @@ export const HistoryContext = createContext<HistoryContextType>(
 );
 
 const HistoryProvider: FC = ({children}) => {
-  const [history, setHistory] = useState<number[]>([]);
+  const [history = [], setHistory] = useMMKVObject<number[]>(HISTORY_KEY);
 
-  const loadHistory = useCallback(async () => {
-    const historyJson = await AsyncStorageLib.getItem(HISTORY_KEY);
-    if (historyJson) {
-      const loadedHistory = JSON.parse(historyJson);
-      setHistory(loadedHistory);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadHistory();
-  }, [loadHistory]);
-
-  const addToHistory = useCallback((number: number) => {
-    setHistory(prevHistory => {
-      const nextHistory = [...new Set([number, ...prevHistory])].slice(0, 100);
-      AsyncStorageLib.setItem(HISTORY_KEY, JSON.stringify(nextHistory));
-      return nextHistory;
-    });
-  }, []);
-
-  const state = useMemo(
-    () => ({
-      history,
-      addToHistory,
-    }),
-    [addToHistory, history],
-  );
+  const addToHistory = (number: number) =>
+    setHistory([...new Set([number, ...history])].slice(0, 100));
 
   return (
-    <HistoryContext.Provider value={state}>{children}</HistoryContext.Provider>
+    <HistoryContext.Provider value={{history, addToHistory}}>
+      {children}
+    </HistoryContext.Provider>
   );
 };
 

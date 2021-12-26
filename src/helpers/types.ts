@@ -7,6 +7,13 @@ export type Song = {
   withoutChords: string;
 };
 
+export type ActiveEntity = {
+  active: boolean;
+  songNumber?: number;
+  displayName: string;
+  id?: string;
+};
+
 export type StackParamList = {
   Home: undefined;
   History: undefined;

@@ -1,10 +1,10 @@
-import {IconOutline} from '@ant-design/icons-react-native';
 import {FC} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {globalStyles} from '../helpers/globalStyles';
 import {spacing} from '../helpers/spacing';
 import {Theme} from '../helpers/theme';
 import {useConfig, useTheme} from '../hooks';
+import Icons from './Icons';
 
 const BORDER_RADIUS = 6;
 
@@ -32,7 +32,10 @@ const createStyles = (colors: Theme) =>
 
 const TextAlignButtons: FC = () => {
   const {colors} = useTheme();
-  const {textAlign, setTextAlign} = useConfig();
+  const {
+    config: {textAlign},
+    setConfigPart,
+  } = useConfig();
   const styles = createStyles(colors);
 
   const isLeftSelected = textAlign === 'left';
@@ -40,7 +43,7 @@ const TextAlignButtons: FC = () => {
   return (
     <View style={[globalStyles.row, spacing.ml4]}>
       <Pressable
-        onPress={() => setTextAlign('left')}
+        onPress={() => setConfigPart({textAlign: 'left'})}
         style={[
           spacing.px4,
           spacing.py2,
@@ -48,14 +51,10 @@ const TextAlignButtons: FC = () => {
           styles.leftButton,
           isLeftSelected ? styles.active : styles.inactive,
         ]}>
-        <IconOutline
-          name="align-left"
-          size={20}
-          color={isLeftSelected ? 'white' : 'black'}
-        />
+        <Icons.AlignLeft />
       </Pressable>
       <Pressable
-        onPress={() => setTextAlign('center')}
+        onPress={() => setConfigPart({textAlign: 'center'})}
         style={[
           spacing.px4,
           spacing.py2,
@@ -63,11 +62,7 @@ const TextAlignButtons: FC = () => {
           styles.rightButton,
           isLeftSelected ? styles.inactive : styles.active,
         ]}>
-        <IconOutline
-          name="align-center"
-          size={20}
-          color={isLeftSelected ? 'black' : 'white'}
-        />
+        <Icons.AlignCenter />
       </Pressable>
     </View>
   );

@@ -1,10 +1,10 @@
-import {Pressable, StyleSheet, View} from 'react-native';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {ReactNode} from 'react';
-import {globalStyles} from '../helpers/globalStyles';
-import {spacing} from '../helpers/spacing';
-import {useModal, useTheme} from '../hooks';
-import {ModalType, StackParamList} from '../helpers/types';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ReactNode } from 'react';
+import { globalStyles } from '../helpers/globalStyles';
+import { spacing } from '../helpers/spacing';
+import { useModal, useTheme } from '../hooks';
+import { ModalType, StackParamList } from '../helpers/types';
 import Icons from './Icons';
 
 export const BOTTOM_BAR_HEIGHT = 72;
@@ -32,7 +32,7 @@ type Item = {
 const items = Object.freeze<Item[]>([
   {
     Icon: Icons.Heart,
-    screen: 'Favorites',
+    screen: 'Favorites' as const,
   },
   {
     Icon: Icons.Search,
@@ -44,7 +44,7 @@ const items = Object.freeze<Item[]>([
   },
   {
     Icon: Icons.History,
-    screen: 'History',
+    screen: 'History' as const,
   },
   {
     Icon: Icons.Setting,
@@ -53,8 +53,8 @@ const items = Object.freeze<Item[]>([
 ]);
 
 const BottomBar = () => {
-  const {navigate} = useNavigation<NavigationProp<StackParamList>>();
-  const {colors, isDarkMode} = useTheme();
+  const { navigate } = useNavigation<NavigationProp<StackParamList>>();
+  const { colors, isDarkMode } = useTheme();
   const openModal = useModal();
 
   return (
@@ -63,9 +63,9 @@ const BottomBar = () => {
         globalStyles.row,
         styles.wrapper,
         spacing.py4,
-        isDarkMode && {backgroundColor: colors.primarySoft},
+        isDarkMode && { backgroundColor: colors.primarySoft },
       ]}>
-      {items.map(({Icon, screen, modal}, index) => (
+      {items.map(({ Icon, screen, modal }, index) => (
         <Pressable
           hitSlop={8}
           key={index}
@@ -80,9 +80,9 @@ const BottomBar = () => {
             style={[
               styles.iconWrapper,
               spacing.p2,
-              {backgroundColor: colors.white},
+              { backgroundColor: colors.white },
             ]}>
-            {Icon}
+            <Icon />
           </View>
         </Pressable>
       ))}

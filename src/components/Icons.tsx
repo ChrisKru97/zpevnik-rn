@@ -1,37 +1,27 @@
-import VectorImage from 'react-native-vector-image';
+import { Image } from "react-native";
 
 const AlignLeft = () => (
-  <VectorImage source={require('../../svg-icons/align-left.svg')} />
+    <Image source={{ uri: 'align_left' }} />
 );
 const AlignCenter = () => (
-  <VectorImage source={require('../../svg-icons/align-center.svg')} />
+    <Image source={{ uri: 'align_center' }} />
 );
-const Heart = () => (
-  <VectorImage source={require('../../svg-icons/heart.svg')} />
-);
-const History = () => (
-  <VectorImage source={require('../../svg-icons/history.svg')} />
-);
-const Left = () => <VectorImage source={require('../../svg-icons/left.svg')} />;
-const Number = () => (
-  <VectorImage source={require('../../svg-icons/number.svg')} />
-);
-const Search = () => (
-  <VectorImage source={require('../../svg-icons/search.svg')} />
-);
-const Setting = () => (
-  <VectorImage source={require('../../svg-icons/setting.svg')} />
-);
+const Heart = () => <Image source={{ uri: 'heart' }} />;
+const History = () => <Image source={{ uri: 'history' }} />;
+const Left = () => <Image source={{ uri: 'left' }} />;
+const Number = () => <Image source={{ uri: 'number' }} />;
+const Search = () => <Image source={{ uri: 'search' }} />;
+const Setting = () => <Image source={{ uri: 'setting' }} />;
 
 const Icons = Object.freeze({
-  AlignLeft,
-  AlignCenter,
-  Heart,
-  History,
-  Left,
-  Number,
-  Search,
-  Setting,
+    AlignLeft,
+    AlignCenter,
+    Heart,
+    History,
+    Left,
+    Number,
+    Search,
+    Setting,
 });
 
 export default Icons;
